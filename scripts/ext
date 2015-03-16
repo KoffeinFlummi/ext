@@ -1,0 +1,117 @@
+#!/usr/bin/env python3
+
+import os
+import sys
+import subprocess as sp
+
+def usage():
+    print("Usage: ext [file names]")
+    return 0
+
+def has_basefolder(files):
+    if len(files) == 0:
+        return True
+
+    base = files[0].split("/")[0]
+    for f in files:
+        if base != f.split("/")[0]:
+            return False
+
+    return True
+
+def get_name(path):
+    base = os.path.splitext(path.split("/")[-1])[0]
+    if base[-4:] == ".tar":
+        base = os.path.splitext(base)[0]
+    if not os.path.exists(os.path.join(os.getcwd(), base)):
+        return base
+
+    num = 1
+    while os.path.exists(os.path.join(os.getcwd(), base+"_"+str(num))):
+        num += 1
+
+    return base+"_"+str(num)
+
+def extract_rar(path, optargs):
+    files = str(sp.check_output(["unrar", "vb", path], stderr=sp.PIPE), "utf-8")
+    files = files.split("\n")[:-1]
+
+    if has_basefolder(files):
+        sp.check_output(["unrar", "x", "-y", path], stderr=sp.PIPE)
+        print("Extracted {} to current working directory.".format(path))
+        return 0
+    else:
+        name = get_name(path)
+        sp.check_output(["unrar", "x", "-y", path, name+"/"], stderr=sp.PIPE)
+        print("Extracted {} to {}.".format(path, name))
+        return 0
+
+def extract_zip(path, optargs):
+    files = str(sp.check_output(["unzip", "-l", path], stderr=sp.PIPE), "utf-8")
+    files = files.split("\n")[3:-3]
+    files = list(map(lambda x: x.split()[3], files))
+
+    if has_basefolder(files):
+        sp.check_output(["unzip", path], stderr=sp.PIPE)
+        print("Extracted {} to current working directory.".format(path))
+        return 0
+    else:
+        name = get_name(path)
+        sp.check_output(["unzip", path, "-d", name], stderr=sp.PIPE)
+        print("Extracted {} to {}.".format(path, name))
+        return 0
+
+def extract_tar(path, optargs):
+    files = str(sp.check_output(["tar", "-tf", path], stderr=sp.PIPE), "utf-8")
+    files = files.split("\n")[:-1]
+
+    if has_basefolder(files):
+        sp.check_output(["tar", "-xf", path], stderr=sp.PIPE)
+        print("Extracted {} to current working directory.".format(path))
+        return 0
+    else:
+        name = get_name(path)
+        sp.check_output(["tar", "-xf", path, "-C", name], stderr=sp.PIPE)
+        print("Extracted {} to {}.".format(path, name))
+        return 0
+
+def extract(path, optargs):
+    if not os.path.exists(path):
+        raise IOError
+
+    try:
+        if path[-4:] == ".rar":
+            return extract_rar(path, optargs)
+        if path[-4:] == ".zip":
+            return extract_zip(path, optargs)
+        if ".tar." in path or path[-3:] == ".gz" or path[-4:] == ".tgz":
+            return extract_tar(path, optargs)
+    except:
+        if "-d" in optargs:
+            raise
+        else:
+            pass
+
+    raise IOError
+
+def main(args, optargs):
+    if len(args) == 0:
+        return usage()
+
+    errors = 0
+    for a in args:
+        try:
+            extract(a, optargs)
+        except:
+            if "-d" in optargs:
+                raise
+            print("Error while extracting {}".format(a))
+            errors += 1
+
+    return errors
+
+if __name__ == "__main__":
+    args = list(filter(lambda x: x[0] != "-", sys.argv[1:]))
+    optargs = list(filter(lambda x: x[0] == "-", sys.argv[1:]))
+    sys.exit(main(args, optargs))
+
