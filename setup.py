@@ -9,7 +9,7 @@ def read(fname):
   return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
-  name = "ext",
+  name = "ext-util",
   version = "1.0",
   packages = [],
   scripts = ["scripts/ext"],

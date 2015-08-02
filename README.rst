@@ -9,7 +9,7 @@ Setup
 
 ::
 
-    $ pip3 install ext
+    $ pip3 install ext-util
 
 Usage
 ~~~~~
