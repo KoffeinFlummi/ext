@@ -82,7 +82,7 @@ def extract(path, optargs):
     try:
         if path[-4:] == ".rar":
             return extract_rar(path, optargs)
-        if path[-4:] == ".zip":
+        if path[-4:] in [".zip", ".cxr"]:
             return extract_zip(path, optargs)
         if ".tar." in path or path[-3:] == ".gz" or path[-4:] == ".tgz":
             return extract_tar(path, optargs)
