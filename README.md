@@ -12,7 +12,7 @@ ext extracts files to your CWD if there's only one directory or file in there, a
 ### Setup
 
 ```
-$ pip3 install ext-util
+$ pip install ext-util
 ```
 
 
