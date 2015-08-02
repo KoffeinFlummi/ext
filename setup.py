@@ -17,7 +17,7 @@ setup(
   author = "Felix \"KoffeinFlummi\" Wiegand",
   author_email = "koffeinflummi@gmail.com",
   description = "Extract things without having to worry about parameters.",
-  long_description = read("README.md"),
+  long_description = read("README.rst"),
   license = "MIT",
   keywords = "extract archives archive utility",
   url = "https://github.com/KoffeinFlummi/ext",

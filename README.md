@@ -11,7 +11,7 @@ ext extracts files to your CWD if there's only one directory or file in there, a
 ### Setup
 
 ```
-$ python3 setup.py install
+$ pip3 install ext
 ```
 
 
